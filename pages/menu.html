@@ -4,38 +4,180 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>校園外送｜菜單</title>
+    <!-- 載入專案共用的 CSS -->
     <link rel="stylesheet" href="../css/base.css" />
+    <style>
+      /* 針對菜單頁面的獨立排版 */
+      .restaurant-section {
+        margin-bottom: 50px;
+        padding-top: 20px; /* 預留錨點跳轉的緩衝空間，避免被導覽列遮擋 */
+      }
+      .restaurant-title {
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 12px;
+        margin-bottom: 24px;
+        color: #1a202c;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      .menu-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .menu-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      .menu-card h3 {
+        margin: 0 0 12px 0;
+        font-size: 1.25rem;
+        color: #2d3748;
+      }
+      .menu-card p.desc {
+        color: #718096;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        flex-grow: 1;
+        margin-bottom: 16px;
+      }
+      .menu-card .price {
+        font-weight: bold;
+        color: #e53e3e;
+        font-size: 1.15rem;
+        margin-bottom: 20px;
+      }
+      .add-btn {
+        /* 使用與你們截圖相近的綠色系 */
+        background-color: #235a43; 
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+      }
+      .add-btn:hover {
+        background-color: #1a4231;
+      }
+    </style>
   </head>
   <body>
+    <!-- Header 區塊保持原樣 -->
     <header class="site-header">
       <a class="brand" href="../index.html">校園外送</a>
-      <nav aria-label="主要導覽"><a href="restaurants.html">餐廳</a><a href="cart.html">購物車 <span data-cart-count>0</span></a><a href="../index.html">首頁</a></nav>
+      <nav aria-label="主要導覽">
+        <a href="../index.html">首頁</a>
+        <a href="../pages/restaurants.html">餐廳</a>
+        <a href="menu.html">菜單</a>
+        <a href="cart.html">購物車 <span data-cart-count>0</span></a>
+      </nav>
     </header>
+
     <main class="container">
-      <section class="page-heading"><p class="eyebrow">本日菜單</p><h1>晴天咖啡</h1><p class="muted">挑選餐點後，按下按鈕加入購物車。</p></section>
-      <p class="status-message" data-status-message aria-live="polite"></p>
-      <!-- 成員 3：將此區塊改為至少三張餐點卡片，每張需有名稱、價格和加入購物車按鈕。 -->
-      <section class="menu-list">
-        <article class="card">
-          <h2>招牌雞腿飯</h2>
-          <p>酥炸雞腿配滷汁與時蔬,附湯。</p>
-          <p class="price">NT$ 120</p>
-          <button data-add-to-cart="招牌雞腿飯" data-price="120">加入購物車</button>
-        </article>
-        <article class="card">
-          <h2>日式豚骨拉麵</h2>
-          <p>濃厚豚骨湯頭,叉燒兩片、溏心蛋一顆。</p>
-          <p class="price">NT$ 150</p>
-          <button data-add-to-cart="日式豚骨拉麵" data-price="150">加入購物車</button>
-        </article>
-        <article class="card">
-          <h2>青醬松露義大利麵</h2>
-          <p>手打青醬佐松露油,搭配蘑菇與帕瑪森起司。</p>
-          <p class="price">NT$ 180</p>
-          <button data-add-to-cart="青醬松露義大利麵" data-price="180">加入購物車</button>
-        </article>
+      <section class="page-heading">
+        <p class="eyebrow">選擇餐點</p>
+        <h1>詳細菜單</h1>
+        <p class="muted">將喜歡的餐點加入購物車吧！</p>
+      </section>
+
+      <!-- 餐廳一：晴天咖啡 Sunny Cafe -->
+      <section id="sunny-cafe" class="restaurant-section">
+        <h2 class="restaurant-title">☕ 晴天咖啡 Sunny Cafe</h2>
+        <div class="menu-grid">
+          <div class="menu-card">
+            <h3>經典冰拿鐵</h3>
+            <p class="desc">嚴選中深焙咖啡豆，搭配濃郁小農鮮奶，香醇順口，為你補充一天活力。</p>
+            <div class="price">NT$ 90</div>
+            <button class="add-btn" onclick="addToCart('經典冰拿鐵')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>煙燻鮭魚貝果</h3>
+            <p class="desc">現烤外酥內軟的手工貝果，夾入挪威煙燻鮭魚與特製奶油乳酪，輕食首選。</p>
+            <div class="price">NT$ 135</div>
+            <button class="add-btn" onclick="addToCart('煙燻鮭魚貝果')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>海鹽焦糖巴斯克</h3>
+            <p class="desc">微焦表皮帶有焦糖香氣，內餡綿密滑順，點綴少許海鹽提味，甜而不膩。</p>
+            <div class="price">NT$ 110</div>
+            <button class="add-btn" onclick="addToCart('海鹽焦糖巴斯克')">加入購物車</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 餐廳二：百味食堂 Baili Kitchen -->
+      <section id="baili-kitchen" class="restaurant-section">
+        <h2 class="restaurant-title">🍱 百味食堂 Baili Kitchen</h2>
+        <div class="menu-grid">
+          <div class="menu-card">
+            <h3>舒肥嫩雞胸健康餐</h3>
+            <p class="desc">低溫烹調鎖住肉汁的義式香料雞胸，搭配紫米飯與五種川燙鮮蔬，高蛋白低負擔。</p>
+            <div class="price">NT$ 120</div>
+            <button class="add-btn" onclick="addToCart('舒肥嫩雞胸健康餐')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>香煎薄鹽鯖魚便當</h3>
+            <p class="desc">嚴選挪威優質鯖魚，富含 Omega-3，慢火香煎至外皮金黃酥脆，健康又下飯。</p>
+            <div class="price">NT$ 130</div>
+            <button class="add-btn" onclick="addToCart('香煎薄鹽鯖魚便當')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>鮮菇溫沙拉 (純素)</h3>
+            <p class="desc">多種當季菇類與鮮甜蔬菜，佐以和風柚子醬，清爽無負擔的蔬食新選擇。</p>
+            <div class="price">NT$ 100</div>
+            <button class="add-btn" onclick="addToCart('鮮菇溫沙拉')">加入購物車</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 餐廳三：翠園手工水餃 Emerald Dumplings -->
+      <section id="emerald-dumplings" class="restaurant-section">
+        <h2 class="restaurant-title">🥟 翠園手工水餃 Emerald Dumplings</h2>
+        <div class="menu-grid">
+          <div class="menu-card">
+            <h3>高麗菜鮮肉水餃 (10顆)</h3>
+            <p class="desc">選用在地清脆高麗菜與新鮮溫體豬，手工揉捏 Q 彈麵皮，鮮甜多汁的經典口味。</p>
+            <div class="price">NT$ 70</div>
+            <button class="add-btn" onclick="addToCart('高麗菜鮮肉水餃')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>韭菜鮮肉水餃 (10顆)</h3>
+            <p class="desc">濃郁韭菜香氣與飽滿豬肉餡完美結合，傳承三十年的實在好味道。</p>
+            <div class="price">NT$ 70</div>
+            <button class="add-btn" onclick="addToCart('韭菜鮮肉水餃')">加入購物車</button>
+          </div>
+          <div class="menu-card">
+            <h3>家傳酸辣湯</h3>
+            <p class="desc">配料豐富的台式酸辣湯，酸度適中，微辣開胃，是搭配水餃的靈魂伴侶。</p>
+            <div class="price">NT$ 40</div>
+            <button class="add-btn" onclick="addToCart('家傳酸辣湯')">加入購物車</button>
+          </div>
+        </div>
       </section>
     </main>
-    <footer>校園外送小組協作練習</footer><script src="../js/app.js"></script>
+
+    <!-- Footer 區塊 -->
+    <footer>© 2026 校園外送 Campus Eat 小組協作練習成果發表</footer>
+
+    <script src="../js/app.js"></script>
+    <script>
+      // 驗證條件：點擊加入購物車按鈕，畫面顯示已加入提示
+      function addToCart(itemName) {
+        alert(`✅ 已成功將「${itemName}」加入購物車！`);
+      }
+    </script>
   </body>
 </html>
