@@ -3,12 +3,291 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>校園外送｜首頁</title>
+    <title>校園外送｜想吃什麼，送到你手上</title>
     <link rel="stylesheet" href="css/base.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap');
+
+      :root {
+        --primary-gradient: linear-gradient(135deg, #2e7d61 0%, #1b4e3e 100%);
+        --primary-light: rgba(46, 125, 97, 0.08);
+        --slate-primary: #0f172a;
+        --slate-secondary: #475569;
+        --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 8px -1px rgba(15, 23, 42, 0.03);
+        --card-shadow-hover: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+      }
+
+      body {
+        font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+        background-color: #f8fafc;
+        color: var(--slate-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Sticky Premium Header */
+      .site-header {
+        border-bottom: 1px solid #f1f5f9;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+      }
+      .brand {
+        font-size: 1.25rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.5px;
+        transition: transform 0.2s ease;
+      }
+      .brand:hover {
+        transform: scale(1.02);
+      }
+      .site-header nav a {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--slate-secondary);
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+      .site-header nav a:hover {
+        color: #2e7d61;
+        background-color: var(--primary-light);
+      }
+
+      /* Hero Section Redesign */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 96px 32px;
+        background: radial-gradient(circle at 90% 10%, rgba(46, 125, 97, 0.08), transparent 45%),
+                    radial-gradient(circle at 10% 90%, rgba(27, 78, 62, 0.05), transparent 45%),
+                    #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 32px;
+        margin-top: 32px;
+        margin-bottom: 56px;
+        box-shadow: var(--card-shadow);
+        text-align: center;
+      }
+      .hero .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #2e7d61;
+        background: var(--primary-light);
+        padding: 6px 16px;
+        border-radius: 9999px;
+        display: inline-block;
+        margin-bottom: 16px;
+      }
+      .hero h1 {
+        font-size: clamp(2.25rem, 5vw, 3.75rem);
+        line-height: 1.25;
+        margin: 16px auto;
+        font-weight: 800;
+        background: linear-gradient(135deg, #0f172a 30%, #334155 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        max-width: 800px;
+        letter-spacing: -0.02em;
+      }
+      .hero p {
+        font-size: 1.125rem;
+        color: var(--slate-secondary);
+        max-width: 600px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+      }
+      .hero .button {
+        font-weight: 600;
+        padding: 14px 36px;
+        font-size: 1rem;
+        border-radius: 9999px;
+        background: var(--primary-gradient);
+        box-shadow: 0 10px 25px -5px rgba(46, 125, 97, 0.35);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(0);
+        margin-top: 0;
+      }
+      .hero .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px -5px rgba(46, 125, 97, 0.45);
+        background: linear-gradient(135deg, #24634d 0%, #153c30 100%);
+      }
+
+      /* Sections General */
+      .section-title {
+        text-align: center;
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--slate-primary);
+        margin-top: 0;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+      }
+      .section-subtitle {
+        text-align: center;
+        color: var(--slate-secondary);
+        max-width: 540px;
+        margin: 0 auto 48px;
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      /* Features Grid */
+      .features-container {
+        margin-bottom: 64px;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      .feature-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 36px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+      }
+      .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: rgba(46, 125, 97, 0.3);
+      }
+      .feature-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2e7d61;
+        margin-bottom: 24px;
+        transition: all 0.3s ease;
+      }
+      .feature-card:hover .feature-icon-wrapper {
+        background: #2e7d61;
+        color: #ffffff;
+        transform: scale(1.05);
+      }
+      .feature-card h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--slate-primary);
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+      .feature-card p {
+        color: var(--slate-secondary);
+        line-height: 1.6;
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      /* Steps Section */
+      .steps-container {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 32px;
+        padding: 56px 40px;
+        margin-bottom: 64px;
+        box-shadow: var(--card-shadow);
+      }
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 32px;
+      }
+      .step-card {
+        position: relative;
+        padding: 24px 16px;
+      }
+      .step-number {
+        font-family: 'Outfit', sans-serif;
+        font-size: 4rem;
+        font-weight: 800;
+        color: rgba(46, 125, 97, 0.08);
+        position: absolute;
+        top: -16px;
+        left: 8px;
+        line-height: 1;
+        user-select: none;
+        transition: all 0.3s ease;
+      }
+      .step-card:hover .step-number {
+        color: rgba(46, 125, 97, 0.16);
+        transform: translateY(-4px) scale(1.05);
+      }
+      .step-content {
+        position: relative;
+        z-index: 2;
+        margin-top: 36px;
+      }
+      .step-content h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--slate-primary);
+        margin-bottom: 8px;
+        margin-top: 0;
+      }
+      .step-content p {
+        color: var(--slate-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* Footer Styling */
+      footer {
+        border-top: 1px solid #e2e8f0;
+        padding: 32px 24px;
+        margin-top: 80px;
+        text-align: center;
+        color: var(--slate-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .hero {
+          padding: 64px 20px;
+          margin-top: 16px;
+        }
+        .steps-container {
+          padding: 40px 20px;
+        }
+        .step-card {
+          padding: 16px 8px;
+        }
+      }
+    </style>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html">校園外送</a>
+      <a class="brand" href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2e7d61" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: middle;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+        </svg>
+        <span>校園外送 Campus Eat</span>
+      </a>
       <nav aria-label="主要導覽">
         <a href="pages/restaurants.html">餐廳</a>
         <a href="pages/menu.html">菜單</a>
@@ -19,21 +298,98 @@
     </header>
 
     <main class="container">
+      <!-- Hero Section -->
       <section class="hero" aria-labelledby="page-title">
-        <p class="eyebrow">校園限定服務</p>
+        <span class="eyebrow">Campus Exclusive</span>
         <h1 id="page-title">想吃什麼，送到你手上</h1>
-        <p>這是一個供小組協作練習使用的外送系統前台原型。</p>
-        <a class="button" href="pages/restaurants.html">瀏覽餐廳</a>
+        <p>專為校園打造的極速外送平台。跳過漫長排隊，讓熱騰騰的學餐與校園周邊美食第一時間為你直送教室或宿舍。</p>
+        <a class="button" href="pages/restaurants.html">立即瀏覽餐廳</a>
       </section>
 
-      <!-- 成員 1：在這裡完成首頁與平台介紹功能。 -->
-      <section id="home-feature" class="placeholder" aria-labelledby="home-feature-title">
-        <h2 id="home-feature-title">平台介紹</h2>
-        <p>待完成：介紹校園外送的特色與使用流程。</p>
+      <!-- Platform Features Section (至少 3 個服務特色) -->
+      <section class="features-container" aria-labelledby="features-title">
+        <h2 id="features-title" class="section-title">平台專屬特色</h2>
+        <p class="section-subtitle">專門為學生與教職員設計，解決以往外送平台無法進入校園或配送點不清的痛點。</p>
+        
+        <div class="features-grid">
+          <!-- Feature 1: 校園直達 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <h3>校園直達無阻</h3>
+            <p>外送夥伴皆由同校學生擔任，精準辨識各大教學樓、實驗室與宿舍房號，不需跑到校門口頂著大太陽取餐。</p>
+          </article>
+
+          <!-- Feature 2: 快速通道 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <h3>特快專屬通道</h3>
+            <p>與校園餐廳與學區周邊優質店家深度合作，設置專屬出餐口，省去下課時段現場排隊點餐的漫長等待。</p>
+          </article>
+
+          <!-- Feature 3: 多人拼單 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3>同儕多人拼單</h3>
+            <p>支援同宿舍、同大樓同學快速發起拼單，輕鬆平分外送費，同享高額滿額折抵，美味省錢又環保。</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Usage Steps Section (至少 3 個使用步驟) -->
+      <section class="steps-container" aria-labelledby="steps-title">
+        <h2 id="steps-title" class="section-title">輕鬆訂餐三步驟</h2>
+        <p class="section-subtitle">只需幾秒鐘即可完成下單，接下來就交給我們貼心的校園外送夥伴吧！</p>
+
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-content">
+              <h3>選擇心儀美食</h3>
+              <p>點擊瀏覽附近合作餐廳，篩選各式學餐、速食或手搖飲料，挑選好後一鍵加入購物車。</p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-content">
+              <h3>精確校園定位</h3>
+              <p>選定你的大樓名稱與教室或寢室號碼，方便配送學生外送員以最快路徑直達。</p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-content">
+              <h3>熱騰直送享用</h3>
+              <p>透過即時狀態追蹤訂單進度，開門直接從同校同學手中接過餐點，即刻熱騰開動！</p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <footer>校園外送小組協作練習</footer>
+    <footer>
+      <p>© 2026 校園外送 Campus Eat 小組協作練習成果發表</p>
+    </footer>
     <script src="js/app.js"></script>
   </body>
 </html>
