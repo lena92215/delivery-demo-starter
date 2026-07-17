@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>校園外送｜菜單</title>
     <link rel="stylesheet" href="../css/base.css" />
+    <style>
+      .card-img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+      .shop-title { margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #2f6b4f; }
+    </style>
   </head>
   <body>
     <header class="site-header">
@@ -12,11 +16,50 @@
       <nav aria-label="主要導覽"><a href="restaurants.html">餐廳</a><a href="cart.html">購物車 <span data-cart-count>0</span></a><a href="../index.html">首頁</a></nav>
     </header>
     <main class="container">
-      <section class="page-heading"><p class="eyebrow">本日菜單</p><h1>晴天咖啡</h1><p class="muted">挑選餐點後，按下按鈕加入購物車。</p></section>
+      <section class="page-heading"><p class="eyebrow">本日菜單</p><h1 data-shop-name>菜單</h1><p class="muted">挑選餐點後，按下按鈕加入購物車。</p></section>
       <p class="status-message" data-status-message aria-live="polite"></p>
-      <!-- 成員 3：將此區塊改為至少三張餐點卡片，每張需有名稱、價格和加入購物車按鈕。 -->
-      <section class="placeholder"><h2>餐點列表</h2><p>待完成：使用 <code>data-add-to-cart</code> 讓按鈕顯示加入提示。</p></section>
+      <div data-menu-root></div>
     </main>
-    <footer>校園外送小組協作練習</footer><script src="../js/app.js"></script>
+    <footer>校園外送小組協作練習</footer>
+    <script src="../js/app.js"></script>
+    <script>
+      const SHOPS = [
+        { key: "sunny", name: "晴天咖啡 Sunny Cafe", items: [
+          { n: "手沖精品咖啡", d: "當日單品豆現磨手沖，酸甜平衡。", p: 90, img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop" },
+          { n: "手工貝果佐奶油乳酪", d: "現烤貝果，抹上厚厚一層奶油乳酪。", p: 110, img: "https://images.unsplash.com/photo-1585478259715-876acc5be8eb?w=600&h=400&fit=crop" },
+          { n: "檸檬塔", d: "酸香檸檬餡配酥脆塔皮，甜度剛好。", p: 120, img: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop" },
+        ]},
+        { key: "baili", name: "百味食堂 Baili Kitchen", items: [
+          { n: "香煎雞胸雙主菜餐盒", d: "低油煎雞胸配時蔬與糙米飯。", p: 130, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop" },
+          { n: "味噌鯖魚餐盒", d: "挪威鯖魚烤製，佐味噌醬與溫野菜。", p: 150, img: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=400&fit=crop" },
+          { n: "藜麥蔬食盒", d: "全素配置，藜麥搭配七種當季蔬菜。", p: 120, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop" },
+        ]},
+        { key: "emerald", name: "翠園手工水餃 Emerald Dumplings", items: [
+          { n: "高麗菜豬肉水餃（10顆）", d: "手工現包，皮Q彈內餡多汁。", p: 80, img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&h=400&fit=crop" },
+          { n: "韭菜鮮蝦水餃（10顆）", d: "整尾鮮蝦入餡，鮮甜有嚼勁。", p: 100, img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&h=400&fit=crop" },
+          { n: "酸辣湯", d: "料多實在，微酸帶辣的暖胃選擇。", p: 45, img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=400&fit=crop" },
+        ]},
+      ];
+ 
+      const q = (new URLSearchParams(location.search).get("restaurant") || "").toLowerCase();
+      const picked = SHOPS.filter(s => !q || s.key === q || s.name.toLowerCase().includes(q));
+      const shops = picked.length ? picked : SHOPS;
+ 
+      document.querySelector("[data-shop-name]").textContent =
+        shops.length === 1 ? shops[0].name : "全部餐廳";
+ 
+      document.querySelector("[data-menu-root]").innerHTML = shops.map(s => `
+        ${shops.length > 1 ? `<h2 class="shop-title">${s.name}</h2>` : ""}
+        <section class="menu-list">
+          ${s.items.map(i => `
+            <article class="card">
+              <img class="card-img" src="${i.img}" alt="${i.n}">
+              <h2>${i.n}</h2>
+              <p>${i.d}</p>
+              <p class="price">NT$ ${i.p}</p>
+              <button data-add-to-cart="${i.n}" data-price="${i.p}">加入購物車</button>
+            </article>`).join("")}
+        </section>`).join("");
+    </script>
   </body>
 </html>
