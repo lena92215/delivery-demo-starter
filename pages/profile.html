@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>校園外送｜會員中心</title>
+    <link rel="stylesheet" href="../css/base.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap');
+
+      :root {
+        --primary: #2e7d61;
+        --primary-gradient: linear-gradient(135deg, #2e7d61 0%, #1b4e3e 100%);
+        --primary-light: rgba(46, 125, 97, 0.08);
+        --slate-primary: #0f172a;
+        --slate-secondary: #475569;
+        --border-color: #e2e8f0;
+        --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 8px -1px rgba(15, 23, 42, 0.03);
+      }
+
+      body {
+        font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+        background-color: #f8fafc;
+        color: var(--slate-primary);
+        line-height: 1.6;
+      }
+
+      /* Premium Header */
+      .site-header {
+        border-bottom: 1px solid #f1f5f9;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+      }
+      .brand {
+        font-size: 1.25rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.5px;
+      }
+      .site-header nav a {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--slate-secondary);
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+      .site-header nav a:hover {
+        color: var(--primary);
+        background-color: var(--primary-light);
+      }
+
+      /* Grid Layout */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 32px;
+        margin: 32px 0 64px;
+      }
+
+      @media (max-width: 768px) {
+        .profile-grid {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+
+      /* Cards Styling */
+      .profile-card {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: var(--card-shadow);
+      }
+
+      /* Avatar and Info */
+      .user-summary {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .avatar-wrapper {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        margin: 0 auto 16px;
+        border: 3px solid #ffffff;
+        box-shadow: 0 4px 10px rgba(46, 125, 97, 0.15);
+      }
+      .user-summary h2 {
+        margin: 0 0 4px;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .user-summary p {
+        margin: 0;
+        color: var(--slate-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* Wallet Balance */
+      .wallet-box {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 16px;
+        padding: 20px;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .wallet-box::after {
+        content: '';
+        position: absolute;
+        right: -20px;
+        bottom: -20px;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle, rgba(46, 125, 97, 0.15) 0%, transparent 70%);
+      }
+      .wallet-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      .wallet-balance {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #38bdf8;
+        font-family: 'Outfit', sans-serif;
+      }
+
+      /* Lists inside Profile */
+      .section-heading-sm {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 16px;
+        color: var(--slate-primary);
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .list-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .list-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8fafc;
+        font-size: 0.95rem;
+      }
+      .list-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      .list-item-icon {
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+      .tag-default {
+        font-size: 0.75rem;
+        background-color: var(--primary-light);
+        color: var(--primary);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        margin-left: auto;
+      }
+
+      /* Order History */
+      .order-history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .order-card {
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.2s ease;
+      }
+      .order-card:hover {
+        border-color: rgba(46, 125, 97, 0.3);
+        background: #fafbfd;
+      }
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px dashed #f1f5f9;
+        padding-bottom: 10px;
+      }
+      .order-id {
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem;
+      }
+      .order-date {
+        font-size: 0.85rem;
+        color: var(--slate-secondary);
+      }
+      .order-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .order-details {
+        font-size: 0.9rem;
+      }
+      .order-restaurant {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .order-items {
+        color: var(--slate-secondary);
+      }
+      .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+      }
+      .order-price {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--primary);
+        font-family: 'Outfit', sans-serif;
+      }
+      .order-status-tag {
+        font-size: 0.8rem;
+        background-color: #f0fdf4;
+        color: #16a34a;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        font-weight: 600;
+      }
+
+      footer {
+        border-top: 1px solid var(--border-color);
+        padding: 32px 24px;
+        text-align: center;
+        color: var(--slate-secondary);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2e7d61" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: middle;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+        </svg>
+        <span>校園外送 Campus Eat</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="restaurants.html">餐廳</a>
+        <a href="menu.html">菜單</a>
+        <a href="cart.html">購物車 <span data-cart-count>0</span></a>
+        <a href="order-status.html">訂單狀態</a>
+        <a href="contact.html">聯絡我們</a>
+        <a href="../index.html">首頁</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="page-heading">
+        <p class="eyebrow">Membership Hub</p>
+        <h1 style="margin: 0; font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;">會員中心</h1>
+        <p class="muted">管理個人配送設定與查看歷史訂單資料。</p>
+      </section>
+
+      <div class="profile-grid">
+        <!-- Sidebar Profile Cards -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Profile Main Card -->
+          <div class="profile-card">
+            <div class="user-summary">
+              <div class="avatar-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <h2>王大明</h2>
+              <p>資訊工程學系 · 三年級</p>
+              <p style="font-size: 0.8rem; margin-top: 4px; color: #94a3b8;">學號：D1102345</p>
+            </div>
+            
+            <div class="wallet-box">
+              <div class="wallet-label">校園卡 Campus Card 餘額</div>
+              <div class="wallet-balance">$350 NTD</div>
+            </div>
+          </div>
+
+          <!-- Common Delivery Locations -->
+          <div class="profile-card" style="padding: 24px;">
+            <h3 class="section-heading-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              常用配送大樓
+            </h3>
+            <ul class="list-items">
+              <li class="list-item">
+                <span class="list-item-icon">📍</span>
+                <span>資工館 3 樓 302 實驗室</span>
+                <span class="tag-default">預設</span>
+              </li>
+              <li class="list-item">
+                <span class="list-item-icon">📍</span>
+                <span>女生宿舍 A 館正門</span>
+              </li>
+              <li class="list-item">
+                <span class="list-item-icon">📍</span>
+                <span>第一教學大樓中庭</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Saved Payments -->
+          <div class="profile-card" style="padding: 24px;">
+            <h3 class="section-heading-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              常用付款方式
+            </h3>
+            <ul class="list-items">
+              <li class="list-item">
+                <span class="list-item-icon">💳</span>
+                <span>校園卡 Campus Card</span>
+                <span class="tag-default">預設</span>
+              </li>
+              <li class="list-item">
+                <span class="list-item-icon">📱</span>
+                <span>LINE Pay 綁定</span>
+              </li>
+              <li class="list-item">
+                <span class="list-item-icon">💵</span>
+                <span>貨到付款 (現金)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Main Order History Area -->
+        <div class="profile-card">
+          <h3 class="section-heading-sm" style="font-size: 1.25rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            近期訂單紀錄
+          </h3>
+          
+          <div class="order-history-list">
+            <!-- Order 1 -->
+            <div class="order-card">
+              <div class="order-header">
+                <span class="order-id">單號 #CE-2026071701</span>
+                <span class="order-date">2026-07-17 11:35</span>
+              </div>
+              <div class="order-body">
+                <div class="order-details">
+                  <div class="order-restaurant">百里香廚房</div>
+                  <div class="order-items">爌肉飯便當 x 1、特調冰紅茶 x 1</div>
+                </div>
+                <div class="order-price">$130 NTD</div>
+              </div>
+              <div class="order-footer">
+                <span class="order-status-tag">已送達</span>
+                <a href="order-status.html" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: underline;">追蹤配送</a>
+              </div>
+            </div>
+
+            <!-- Order 2 -->
+            <div class="order-card">
+              <div class="order-header">
+                <span class="order-id">單號 #CE-2026071604</span>
+                <span class="order-date">2026-07-16 18:12</span>
+              </div>
+              <div class="order-body">
+                <div class="order-details">
+                  <div class="order-restaurant">翡翠餃子館</div>
+                  <div class="order-items">高麗菜水餃 x 10、招牌酸辣湯 x 1</div>
+                </div>
+                <div class="order-price">$120 NTD</div>
+              </div>
+              <div class="order-footer">
+                <span class="order-status-tag">已送達</span>
+                <a href="order-status.html" style="font-size: 0.85rem; color: var(--primary); font-weight: 600; text-decoration: underline;">追蹤配送</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 校園外送 Campus Eat 小組協作練習成果發表</p>
+    </footer>
+    <script src="../js/app.js"></script>
+  </body>
+</html>
