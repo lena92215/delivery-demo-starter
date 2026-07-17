@@ -458,53 +458,15 @@
         <div class="cart-card" role="region" aria-labelledby="cart-items-title">
           <div class="cart-card-header">
             <h2 id="cart-items-title">餐點清單</h2>
-            <span class="item-count-badge" aria-label="共 3 項餐點">3 項餐點</span>
+            <span class="item-count-badge" id="cart-item-count" aria-label="共 0 項餐點">0 項餐點</span>
           </div>
 
-          <!-- Item 1 -->
-          <article class="cart-item">
-            <div class="item-icon" aria-hidden="true">☕</div>
-            <div class="item-info">
-              <p class="item-name">手沖精品咖啡</p>
-              <p class="item-meta">
-                晴天咖啡 Sunny Cafe
-                <span class="qty-dot" aria-hidden="true"></span>
-                數量：1
-              </p>
-            </div>
-            <span class="item-price">NT$&nbsp;90</span>
-          </article>
-
-          <!-- Item 2 -->
-          <article class="cart-item">
-            <div class="item-icon" aria-hidden="true">🥡</div>
-            <div class="item-info">
-              <p class="item-name">香煎雞胸雙主菜餐盒</p>
-              <p class="item-meta">
-                百味食堂 Baili Kitchen
-                <span class="qty-dot" aria-hidden="true"></span>
-                數量：1
-              </p>
-            </div>
-            <span class="item-price">NT$&nbsp;130</span>
-          </article>
-
-          <!-- Item 3 -->
-          <article class="cart-item">
-            <div class="item-icon" aria-hidden="true">🥟</div>
-            <div class="item-info">
-              <p class="item-name">高麗菜豬肉水餃（10顆）</p>
-              <p class="item-meta">
-                翠園手工水餃 Emerald Dumplings
-                <span class="qty-dot" aria-hidden="true"></span>
-                數量：2
-              </p>
-            </div>
-            <span class="item-price">NT$&nbsp;160</span>
-          </article>
+          <div id="cart-items-container">
+            <!-- 購物車餐點將透過 JavaScript 動態生成於此 -->
+          </div>
 
           <!-- Delivery location notice -->
-          <div class="delivery-notice" role="note">
+          <div class="delivery-notice" role="note" style="margin-top: 20px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                  stroke-linejoin="round" aria-hidden="true">
@@ -636,28 +598,77 @@
 
     <script src="../js/app.js"></script>
     <script>
-      // ── Cart data (static demo) ────────────────────────
-      const CART_ITEMS = [
-        { name: '手沖精品咖啡',       price: 90,  qty: 1 },
-        { name: '香煎雞胸雙主菜餐盒', price: 130, qty: 1 },
-        { name: '高麗菜豬肉水餃（10顆）', price: 80, qty: 2 },
-      ];
+      // ── Cart data (dynamic from localStorage) ────────────────────────
+      let CART_ITEMS = JSON.parse(localStorage.getItem('cartItems')) || [];
       const SHIPPING_FEE = 30;
       const DISCOUNT     = 30;
 
+      // ── Render Cart Items ──────────────────────────────
+      function renderCartItems() {
+        const container = document.getElementById('cart-items-container');
+        const countBadge = document.getElementById('cart-item-count');
+        const btnOrder = document.getElementById('btn-confirm-order');
+        
+        const totalItems = CART_ITEMS.reduce((acc, i) => acc + i.qty, 0);
+        countBadge.textContent = totalItems + ' 項餐點';
+        countBadge.setAttribute('aria-label', `共 ${totalItems} 項餐點`);
+
+        if (CART_ITEMS.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 40px 28px; text-align: center; color: var(--slate-600);">
+              <div style="font-size: 2.5rem; margin-bottom: 12px;">🛒</div>
+              <p style="margin: 0;">您的購物車目前是空的</p>
+              <a href="restaurants.html" style="display: inline-block; margin-top: 16px; color: var(--green); font-weight: 600; text-decoration: underline;">去逛逛餐廳</a>
+            </div>
+          `;
+          btnOrder.disabled = true;
+          btnOrder.style.opacity = '0.5';
+          btnOrder.style.cursor = 'not-allowed';
+          return;
+        }
+
+        const icons = ['🍔', '🥡', '☕', '🥟', '🥗', '🥤', '🍜'];
+        
+        container.innerHTML = CART_ITEMS.map((item, index) => {
+          // 隨機選一個 icon 或根據名稱做簡單對應 (此處用隨機模擬)
+          const icon = icons[index % icons.length];
+          return `
+            <article class="cart-item">
+              <div class="item-icon" aria-hidden="true">${icon}</div>
+              <div class="item-info">
+                <p class="item-name">${item.name}</p>
+                <p class="item-meta">
+                  ${item.shop || '美味餐點'}
+                  <span class="qty-dot" aria-hidden="true"></span>
+                  數量：${item.qty}
+                </p>
+              </div>
+              <span class="item-price">NT$&nbsp;${item.price * item.qty}</span>
+            </article>
+          `;
+        }).join('');
+      }
+
       // ── Compute totals and update DOM ──────────────────
-      (function updateSummary() {
+      function updateSummary() {
         const subtotal = CART_ITEMS.reduce((acc, i) => acc + i.price * i.qty, 0);
-        const total    = subtotal + SHIPPING_FEE - DISCOUNT;
+        // 如果購物車為空，運費跟折扣設為 0
+        const currentShipping = subtotal > 0 ? SHIPPING_FEE : 0;
+        const currentDiscount = subtotal > 0 ? DISCOUNT : 0;
+        const total = subtotal + currentShipping - currentDiscount;
 
         document.getElementById('subtotal-value').textContent = 'NT$ ' + subtotal;
-        document.getElementById('shipping-value').textContent = 'NT$ ' + SHIPPING_FEE;
-        document.getElementById('discount-value').textContent = '－NT$ ' + DISCOUNT;
+        document.getElementById('shipping-value').textContent = 'NT$ ' + currentShipping;
+        document.getElementById('discount-value').textContent = '－NT$ ' + currentDiscount;
         document.getElementById('total-amount').textContent   = 'NT$ ' + total;
         document.getElementById('total-amount').setAttribute(
           'aria-label', '訂單總金額 新台幣 ' + total + ' 元'
         );
-      })();
+      }
+
+      // Initialize
+      renderCartItems();
+      updateSummary();
 
       // ── "確認下單" button → show modal ────────────────
       const overlay   = document.getElementById('order-overlay');
