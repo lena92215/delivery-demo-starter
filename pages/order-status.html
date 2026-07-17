@@ -5,17 +5,562 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>校園外送｜訂單狀態</title>
     <link rel="stylesheet" href="../css/base.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap');
+
+      :root {
+        --primary: #2e7d61;
+        --primary-gradient: linear-gradient(135deg, #2e7d61 0%, #1b4e3e 100%);
+        --primary-light: rgba(46, 125, 97, 0.08);
+        --slate-primary: #0f172a;
+        --slate-secondary: #475569;
+        --border-color: #e2e8f0;
+        --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 8px -1px rgba(15, 23, 42, 0.03);
+      }
+
+      body {
+        font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+        background-color: #f8fafc;
+        color: var(--slate-primary);
+        line-height: 1.6;
+      }
+
+      /* Premium Header */
+      .site-header {
+        border-bottom: 1px solid #f1f5f9;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+      }
+      .brand {
+        font-size: 1.25rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.5px;
+      }
+      .site-header nav a {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--slate-secondary);
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+      .site-header nav a:hover {
+        color: var(--primary);
+        background-color: var(--primary-light);
+      }
+
+      /* Layout */
+      .order-container {
+        max-width: 800px;
+        margin: 32px auto 64px;
+        padding: 0 16px;
+      }
+
+      /* Hero Progress Card */
+      .status-hero {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .status-hero::after {
+        content: '';
+        position: absolute;
+        right: -40px;
+        bottom: -40px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(46, 125, 97, 0.04) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .status-hero-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+      .status-hero-info {
+        flex-grow: 1;
+      }
+      .status-hero-info h2 {
+        margin: 0 0 6px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--slate-primary);
+      }
+      .status-hero-info p {
+        margin: 0;
+        color: var(--slate-secondary);
+        font-size: 0.95rem;
+      }
+
+      /* Timeline */
+      .timeline-box {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 40px 32px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 32px;
+      }
+      .timeline {
+        position: relative;
+        padding-left: 48px;
+        list-style: none;
+        margin: 0;
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 19px;
+        top: 12px;
+        bottom: 12px;
+        width: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+      }
+      .timeline-progress-bar {
+        position: absolute;
+        left: 19px;
+        top: 12px;
+        width: 3px;
+        background: var(--primary);
+        z-index: 2;
+        transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 0%;
+      }
+      .timeline-item {
+        position: relative;
+        margin-bottom: 40px;
+        transition: all 0.3s ease;
+      }
+      .timeline-item:last-child {
+        margin-bottom: 0;
+      }
+      .timeline-node {
+        position: absolute;
+        left: -48px;
+        top: 2px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 3px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        font-weight: 700;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .timeline-content {
+        padding-left: 12px;
+      }
+      .timeline-content h3 {
+        margin: 0 0 4px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #94a3b8;
+        transition: color 0.4s ease;
+      }
+      .timeline-content p {
+        margin: 0;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        transition: color 0.4s ease;
+      }
+
+      /* Step States */
+      /* Completed State */
+      .timeline-item.completed .timeline-node {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(46, 125, 97, 0.1);
+      }
+      .timeline-item.completed .timeline-content h3 {
+        color: var(--slate-primary);
+      }
+      .timeline-item.completed .timeline-content p {
+        color: var(--slate-secondary);
+      }
+
+      /* Active State */
+      .timeline-item.active .timeline-node {
+        background: #ffffff;
+        border-color: var(--primary);
+        color: var(--primary);
+        box-shadow: 0 0 0 6px rgba(46, 125, 97, 0.18);
+        animation: pulse-node 2s infinite;
+      }
+      .timeline-item.active .timeline-content h3 {
+        color: var(--primary);
+        font-size: 1.25rem;
+      }
+      .timeline-item.active .timeline-content p {
+        color: var(--slate-primary);
+        font-weight: 500;
+      }
+
+      @keyframes pulse-node {
+        0% {
+          box-shadow: 0 0 0 0 rgba(46, 125, 97, 0.3);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(46, 125, 97, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(46, 125, 97, 0);
+        }
+      }
+
+      /* Simulation Panel */
+      .simulator-panel {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #334155;
+        border-radius: 24px;
+        padding: 28px;
+        color: #ffffff;
+        box-shadow: var(--card-shadow);
+      }
+      .simulator-panel h3 {
+        margin: 0 0 8px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #38bdf8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .simulator-panel p {
+        margin: 0 0 20px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+      }
+      .btn-group {
+        display: flex;
+        gap: 12px;
+      }
+      .sim-btn {
+        flex: 1;
+        padding: 12px 16px;
+        border: 0;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn-primary {
+        background: #38bdf8;
+        color: #0f172a;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: #7dd3fc;
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        background: #334155;
+        color: #e2e8f0;
+      }
+      .btn-secondary:hover:not(:disabled) {
+        background: #475569;
+        transform: translateY(-1px);
+      }
+      .sim-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+        padding: 28px 0;
+        margin-top: 56px;
+        color: var(--slate-secondary);
+        font-size: 0.9rem;
+      }
+    </style>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="../index.html">校園外送</a>
-      <nav aria-label="主要導覽"><a href="cart.html">購物車</a><a href="profile.html">會員中心</a><a href="../index.html">首頁</a></nav>
+      <a class="brand" href="../index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2e7d61" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: middle;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+        </svg>
+        <span>校園外送 Campus Eat</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="restaurants.html">餐廳</a>
+        <a href="menu.html">菜單</a>
+        <a href="cart.html">購物車 <span data-cart-count>0</span></a>
+        <a href="profile.html">會員中心</a>
+        <a href="../index.html">首頁</a>
+      </nav>
     </header>
-    <main class="container">
-      <section class="page-heading"><p class="eyebrow">外送進度</p><h1>訂單狀態</h1><p class="muted">使用模擬資料呈現目前的配送進度。</p></section>
-      <!-- 成員 5：將此區塊改為至少三個訂單進度步驟。 -->
-      <section class="placeholder"><h2>目前進度</h2><p>待完成：顯示「店家接單」、「餐點製作中」、「外送途中」等狀態。</p></section>
+
+    <main class="order-container">
+      <section class="page-heading">
+        <p class="eyebrow">外送進度</p>
+        <h1 style="margin: 0; font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;">訂單狀態</h1>
+        <p class="muted">即時追蹤您的餐點配送進度。</p>
+      </section>
+
+      <!-- Status Hero Box -->
+      <section class="status-hero" aria-labelledby="hero-status-title">
+        <div class="status-hero-icon" id="hero-icon-container">
+          <!-- Default SVG: Receipt / Order Accepted -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="status-hero-info">
+          <p class="muted" style="margin:0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 700;">Live Update</p>
+          <h2 id="hero-status-title">訂單已成立</h2>
+          <p id="hero-status-desc">店家已接單，正在準備您的美味餐點。</p>
+        </div>
+      </section>
+
+      <!-- Progress Timeline -->
+      <section class="timeline-box" aria-labelledby="timeline-title">
+        <h2 id="timeline-title" style="margin-top:0; margin-bottom: 24px; font-size: 1.25rem; font-weight: 700;">外送追蹤</h2>
+        
+        <ul class="timeline">
+          <div class="timeline-progress-bar" id="progress-line"></div>
+          
+          <!-- Step 1: 店家接單 -->
+          <li class="timeline-item active" data-step="0">
+            <div class="timeline-node" id="node-0">
+              <!-- Inline Checkmark / Number -->
+              <span>1</span>
+            </div>
+            <div class="timeline-content">
+              <h3>店家已接單</h3>
+              <p>商家確認訂單無誤，開始準備新鮮食材。</p>
+            </div>
+          </li>
+
+          <!-- Step 2: 餐點製作中 -->
+          <li class="timeline-item" data-step="1">
+            <div class="timeline-node" id="node-1">
+              <span>2</span>
+            </div>
+            <div class="timeline-content">
+              <h3>餐點製作中</h3>
+              <p>主廚正用心為您烹調，熱騰騰的美食即將起鍋。</p>
+            </div>
+          </li>
+
+          <!-- Step 3: 外送途中 -->
+          <li class="timeline-item" data-step="2">
+            <div class="timeline-node" id="node-2">
+              <span>3</span>
+            </div>
+            <div class="timeline-content">
+              <h3>外送員配送中</h3>
+              <p>學生外送夥伴已成功取餐，正在奔向您的位置。</p>
+            </div>
+          </li>
+
+          <!-- Step 4: 已送達 -->
+          <li class="timeline-item" data-step="3">
+            <div class="timeline-node" id="node-3">
+              <span>4</span>
+            </div>
+            <div class="timeline-content">
+              <h3>餐點已送達</h3>
+              <p>外送夥伴已抵達指定地點，請趁熱享受美味。</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Interactive Simulator Dashboard -->
+      <section class="simulator-panel" aria-labelledby="simulator-title">
+        <h3 id="simulator-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          小組簡報模擬器 (Presentation Simulator)
+        </h3>
+        <p>為方便您在課堂上展示 Git 協作與網頁功能，您可以使用下方控制鈕即時變更並模擬訂單的配送狀態：</p>
+        <div class="btn-group">
+          <button class="sim-btn btn-secondary" id="btn-prev" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            上一步
+          </button>
+          <button class="sim-btn btn-primary" id="btn-next">
+            下一步
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+          <button class="sim-btn btn-secondary" id="btn-reset">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+            重置
+          </button>
+        </div>
+      </section>
     </main>
-    <footer>校園外送小組協作練習</footer><script src="../js/app.js"></script>
+
+    <footer>
+      <p>© 2026 校園外送 Campus Eat 小組協作練習成果發表</p>
+    </footer>
+
+    <!-- Interactive script to handle timeline animation and status switching -->
+    <script>
+      // Timeline steps configurations
+      const stepsData = [
+        {
+          title: "店家已接單",
+          desc: "商家確認訂單無誤，開始準備新鮮食材。",
+          heroTitle: "訂單已成立",
+          heroDesc: "店家已接單，正在準備您的美味餐點。",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>`
+        },
+        {
+          title: "餐點製作中",
+          desc: "主廚正用心為您烹調，熱騰騰的美食即將起鍋。",
+          heroTitle: "美食烹飪中",
+          heroDesc: "廚房正開足馬力製作您的餐點，預計 10 分鐘內出餐。",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v10m0 0l-4-4m4 4l4-4M2 10h20M12 12v10"></path>
+          </svg>`
+        },
+        {
+          title: "外送員配送中",
+          desc: "學生外送夥伴已成功取餐，正在奔向您的位置。",
+          heroTitle: "外送員飛奔中",
+          heroDesc: "外送夥伴已領取餐點，正抄近路前往您的教學樓/宿舍。",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>`
+        },
+        {
+          title: "餐點已送達",
+          desc: "外送夥伴已抵達指定地點，請趁熱享受美味。",
+          heroTitle: "餐點已送達！",
+          heroDesc: "外送夥伴已送達指定大樓。請趁熱享用！期待下次再為您服務。",
+          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>`
+        }
+      ];
+
+      let currentStep = 0;
+
+      const timelineItems = document.querySelectorAll(".timeline-item");
+      const progressLine = document.getElementById("progress-line");
+      const heroIconContainer = document.getElementById("hero-icon-container");
+      const heroStatusTitle = document.getElementById("hero-status-title");
+      const heroStatusDesc = document.getElementById("hero-status-desc");
+      
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+      const btnReset = document.getElementById("btn-reset");
+
+      // Update timeline display
+      function updateTimeline() {
+        timelineItems.forEach((item, idx) => {
+          const node = item.querySelector(".timeline-node");
+          const stepNum = idx + 1;
+          
+          if (idx < currentStep) {
+            // Completed
+            item.className = "timeline-item completed";
+            node.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+          } else if (idx === currentStep) {
+            // Active
+            item.className = "timeline-item active";
+            node.innerHTML = `<span>${stepNum}</span>`;
+          } else {
+            // Pending
+            item.className = "timeline-item";
+            node.innerHTML = `<span>${stepNum}</span>`;
+          }
+        });
+
+        // Set progress bar height
+        // Steps count is 4, gaps are 3
+        const percent = (currentStep / (timelineItems.length - 1)) * 100;
+        progressLine.style.height = `${percent}%`;
+
+        // Update hero status box
+        const stepInfo = stepsData[currentStep];
+        heroIconContainer.innerHTML = stepInfo.icon;
+        heroStatusTitle.textContent = stepInfo.heroTitle;
+        heroStatusDesc.textContent = stepInfo.heroDesc;
+
+        // Button states
+        btnPrev.disabled = currentStep === 0;
+        btnNext.disabled = currentStep === stepsData.length - 1;
+      }
+
+      // Event Listeners
+      btnPrev.addEventListener("click", () => {
+        if (currentStep > 0) {
+          currentStep--;
+          updateTimeline();
+        }
+      });
+
+      btnNext.addEventListener("click", () => {
+        if (currentStep < stepsData.length - 1) {
+          currentStep++;
+          updateTimeline();
+        }
+      });
+
+      btnReset.addEventListener("click", () => {
+        currentStep = 0;
+        updateTimeline();
+      });
+
+      // Initial Call
+      updateTimeline();
+    </script>
   </body>
 </html>
