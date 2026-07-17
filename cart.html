@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>校園外送｜購物車</title>
+    <meta name="description" content="查看您的購物車，確認餐點明細與總金額後送出訂單。" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <style>
+      /* ── 全域字體覆寫 ── */
+      :root {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --green: #2e7d61;
+        --green-dark: #1f5e47;
+        --green-light: #eaf5f0;
+        --gray-50: #f7f8fa;
+        --gray-100: #eef1f5;
+        --gray-300: #d7dee8;
+        --gray-500: #8896a5;
+        --gray-700: #5d6b79;
+        --gray-900: #263545;
+        --orange: #e07840;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+        --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+        --radius: 14px;
+      }
+
+      /* ── 購物車區域佈局 ── */
+      .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 28px;
+        align-items: start;
+        margin-bottom: 60px;
+      }
+
+      @media (max-width: 780px) {
+        .cart-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ── 餐點列表卡片 ── */
+      .cart-card {
+        background: #fff;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+      }
+
+      .cart-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid var(--gray-100);
+      }
+
+      .cart-card-header h2 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      .cart-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        background: var(--green);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 50%;
+      }
+
+      /* ── 餐點列 ── */
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--gray-100);
+        transition: background .15s;
+      }
+
+      .cart-item:last-child {
+        border-bottom: none;
+      }
+
+      .cart-item:hover {
+        background: var(--gray-50);
+      }
+
+      .item-emoji {
+        font-size: 34px;
+        flex-shrink: 0;
+        width: 52px;
+        height: 52px;
+        background: var(--gray-100);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .item-info {
+        flex: 1;
+      }
+
+      .item-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px;
+      }
+
+      .item-desc {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+      }
+
+      .item-qty-price {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .item-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      .qty-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .qty-btn {
+        width: 26px;
+        height: 26px;
+        border: 1px solid var(--gray-300);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--gray-700);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0;
+        padding: 0;
+        transition: border-color .15s, background .15s;
+      }
+
+      .qty-btn:hover {
+        border-color: var(--green);
+        background: var(--green-light);
+        color: var(--green);
+      }
+
+      .qty-num {
+        font-size: 14px;
+        font-weight: 600;
+        min-width: 18px;
+        text-align: center;
+        color: var(--gray-900);
+      }
+
+      /* ── 結算側欄 ── */
+      .summary-card {
+        background: #fff;
+        border: 1px solid var(--gray-300);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 24px;
+        position: sticky;
+        top: 20px;
+      }
+
+      .summary-card h2 {
+        margin: 0 0 20px;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 0;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+      }
+
+      .summary-row:last-of-type {
+        border-bottom: none;
+      }
+
+      .summary-row.shipping .label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .shipping-icon {
+        font-size: 16px;
+      }
+
+      .summary-row.total {
+        margin-top: 12px;
+        padding-top: 16px;
+        border-top: 2px solid var(--gray-300);
+        border-bottom: none;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gray-900);
+      }
+
+      .total-amount {
+        color: var(--green);
+        font-size: 22px;
+      }
+
+      /* 折扣列 */
+      .summary-row.discount .value {
+        color: var(--orange);
+        font-weight: 600;
+      }
+
+      /* ── 優惠碼輸入 ── */
+      .promo-wrap {
+        display: flex;
+        gap: 8px;
+        margin: 18px 0 20px;
+      }
+
+      .promo-input {
+        flex: 1;
+        padding: 9px 12px;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--gray-900);
+        outline: none;
+        transition: border-color .2s;
+        font-family: inherit;
+      }
+
+      .promo-input:focus {
+        border-color: var(--green);
+      }
+
+      .promo-btn {
+        padding: 9px 14px;
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0;
+        transition: background .15s;
+        font-family: inherit;
+      }
+
+      .promo-btn:hover {
+        background: var(--gray-300);
+      }
+
+      /* ── 確認下單按鈕 ── */
+      .checkout-btn {
+        width: 100%;
+        padding: 15px;
+        margin-top: 16px;
+        background: linear-gradient(135deg, #2e7d61, #3da17e);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: .4px;
+        box-shadow: 0 4px 14px rgba(46,125,97,.35);
+        transition: transform .15s, box-shadow .15s, background .2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+      }
+
+      .checkout-btn:hover {
+        background: linear-gradient(135deg, #1f5e47, #2e7d61);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(46,125,97,.40);
+      }
+
+      .checkout-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(46,125,97,.30);
+      }
+
+      /* ── 安全提示 ── */
+      .secure-notice {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--gray-500);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      /* ── 空購物車 ── */
+      .empty-cart {
+        text-align: center;
+        padding: 60px 24px;
+        color: var(--gray-500);
+      }
+
+      .empty-cart .emoji {
+        font-size: 56px;
+        display: block;
+        margin-bottom: 16px;
+      }
+
+      /* ── 成功 Modal ── */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+        animation: fadeIn .25s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+
+      .modal-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 36px 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,.18);
+        animation: slideUp .3s cubic-bezier(.34,1.56,.64,1);
+      }
+
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px) scale(.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .modal-icon {
+        font-size: 56px;
+        display: block;
+        margin-bottom: 16px;
+        animation: pop .4s .1s cubic-bezier(.34,1.56,.64,1) both;
+      }
+
+      @keyframes pop {
+        from { transform: scale(0); }
+        to   { transform: scale(1); }
+      }
+
+      .modal-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 10px;
+      }
+
+      .modal-desc {
+        font-size: 14px;
+        color: var(--gray-700);
+        margin: 0 0 28px;
+        line-height: 1.6;
+      }
+
+      .modal-close-btn {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #2e7d61, #3da17e);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 0;
+        transition: opacity .2s;
+        font-family: inherit;
+      }
+
+      .modal-close-btn:hover {
+        opacity: .88;
+      }
+
+      /* ── 頁面標題美化 ── */
+      .page-heading {
+        margin: 40px 0 28px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- 導覽列 -->
+    <header class="site-header">
+      <a class="brand" href="../index.html">🛵 校園外送</a>
+      <nav aria-label="主要導覽">
+        <a href="menu.html">菜單</a>
+        <a href="order-status.html">訂單狀態</a>
+        <a href="../index.html">首頁</a>
+      </nav>
+    </header>
+
+    <main class="container">
+
+      <!-- 頁面標題 -->
+      <section class="page-heading">
+        <p class="eyebrow">訂單確認</p>
+        <h1>購物車</h1>
+        <p class="muted">這是前台原型，確認後不會真的送出訂單。</p>
+      </section>
+
+      <!-- 主要佈局：餐點列表 + 結算側欄 -->
+      <div class="cart-layout">
+
+        <!-- 左側：餐點列表 -->
+        <div>
+          <div class="cart-card" id="cart-item-list">
+            <div class="cart-card-header">
+              <h2>餐點明細</h2>
+              <span class="cart-badge" id="item-count">3</span>
+            </div>
+
+            <!-- 餐點 1 -->
+            <div class="cart-item" id="cart-row-1">
+              <div class="item-emoji" aria-hidden="true">🍱</div>
+              <div class="item-info">
+                <p class="item-name">鮭魚親子丼</p>
+                <p class="item-desc">附味噌湯・醃漬小菜</p>
+              </div>
+              <div class="item-qty-price">
+                <span class="item-price" id="price-1">NT$160</span>
+                <div class="qty-control">
+                  <button class="qty-btn" aria-label="減少數量" onclick="changeQty(1, -1)">−</button>
+                  <span class="qty-num" id="qty-1">1</span>
+                  <button class="qty-btn" aria-label="增加數量" onclick="changeQty(1, 1)">＋</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 餐點 2 -->
+            <div class="cart-item" id="cart-row-2">
+              <div class="item-emoji" aria-hidden="true">🍜</div>
+              <div class="item-info">
+                <p class="item-name">香辣牛肉拉麵</p>
+                <p class="item-desc">辣度可選・附半熟蛋</p>
+              </div>
+              <div class="item-qty-price">
+                <span class="item-price" id="price-2">NT$180</span>
+                <div class="qty-control">
+                  <button class="qty-btn" aria-label="減少數量" onclick="changeQty(2, -1)">−</button>
+                  <span class="qty-num" id="qty-2">2</span>
+                  <button class="qty-btn" aria-label="增加數量" onclick="changeQty(2, 1)">＋</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 餐點 3 -->
+            <div class="cart-item" id="cart-row-3">
+              <div class="item-emoji" aria-hidden="true">🧋</div>
+              <div class="item-info">
+                <p class="item-name">珍珠奶茶（大）</p>
+                <p class="item-desc">微糖少冰・附粗吸管</p>
+              </div>
+              <div class="item-qty-price">
+                <span class="item-price" id="price-3">NT$60</span>
+                <div class="qty-control">
+                  <button class="qty-btn" aria-label="減少數量" onclick="changeQty(3, -1)">−</button>
+                  <span class="qty-num" id="qty-3">1</span>
+                  <button class="qty-btn" aria-label="增加數量" onclick="changeQty(3, 1)">＋</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.cart-card -->
+        </div>
+
+        <!-- 右側：結算側欄 -->
+        <aside>
+          <div class="summary-card">
+            <h2>訂單摘要</h2>
+
+            <!-- 優惠碼 -->
+            <div class="promo-wrap">
+              <input
+                class="promo-input"
+                type="text"
+                id="promo-code"
+                placeholder="輸入優惠碼"
+                aria-label="優惠碼"
+              />
+              <button class="promo-btn" id="promo-apply-btn" onclick="applyPromo()">套用</button>
+            </div>
+
+            <!-- 金額明細 -->
+            <div class="summary-row">
+              <span class="label">餐點小計</span>
+              <span class="value" id="subtotal-display">NT$580</span>
+            </div>
+            <div class="summary-row discount" id="discount-row" style="display:none;">
+              <span class="label">🎉 優惠折扣</span>
+              <span class="value" id="discount-display">－NT$0</span>
+            </div>
+            <div class="summary-row shipping">
+              <span class="label">
+                <span class="shipping-icon">🛵</span> 外送運費
+              </span>
+              <span class="value" id="shipping-display">NT$30</span>
+            </div>
+            <div class="summary-row total">
+              <span class="label">總計</span>
+              <span class="total-amount" id="total-display">NT$610</span>
+            </div>
+
+            <!-- 確認下單按鈕 -->
+            <button class="checkout-btn" id="checkout-btn" onclick="handleCheckout()">
+              <span>✅</span> 確認下單
+            </button>
+
+            <!-- 安全提示 -->
+            <p class="secure-notice">
+              <span>🔒</span> 這是模擬原型，不會進行實際付款
+            </p>
+          </div>
+        </aside>
+
+      </div><!-- /.cart-layout -->
+    </main>
+
+    <footer>校園外送小組協作練習</footer>
+
+    <!-- 成功 Modal -->
+    <div class="modal-overlay" id="success-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+      <div class="modal-box">
+        <span class="modal-icon" aria-hidden="true">🎉</span>
+        <h2 class="modal-title" id="modal-title-text">已收到您的訂單</h2>
+        <p class="modal-desc">
+          感謝您的下單！<br />
+          預計 <strong>30–45 分鐘</strong> 內送達。<br />
+          您可至「訂單狀態」頁面追蹤進度。
+        </p>
+        <button class="modal-close-btn" id="modal-close-btn" onclick="closeModal()">
+          好的，繼續瀏覽
+        </button>
+      </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+      /* ======================================================
+         購物車資料
+         ====================================================== */
+      const ITEMS = {
+        1: { unitPrice: 160, qty: 1 },
+        2: { unitPrice: 180, qty: 2 },
+        3: { unitPrice:  60, qty: 1 },
+      };
+      const SHIPPING = 30;
+      let discount = 0;
+      const PROMO_CODES = { 'DEMO10': 50, 'SCHOOL20': 80 };
+
+      /* 更新畫面上所有金額 */
+      function recalculate() {
+        let subtotal = 0;
+        let totalQty = 0;
+
+        for (const [id, item] of Object.entries(ITEMS)) {
+          const lineTotal = item.unitPrice * item.qty;
+          document.getElementById('price-' + id).textContent = 'NT$' + lineTotal;
+          document.getElementById('qty-'   + id).textContent = item.qty;
+          subtotal += lineTotal;
+          totalQty += item.qty;
+        }
+
+        document.getElementById('item-count').textContent   = totalQty;
+        document.getElementById('subtotal-display').textContent = 'NT$' + subtotal;
+        document.getElementById('shipping-display').textContent = 'NT$' + SHIPPING;
+
+        const discountRow = document.getElementById('discount-row');
+        if (discount > 0) {
+          discountRow.style.display = '';
+          document.getElementById('discount-display').textContent = '－NT$' + discount;
+        } else {
+          discountRow.style.display = 'none';
+        }
+
+        const total = subtotal + SHIPPING - discount;
+        document.getElementById('total-display').textContent = 'NT$' + total;
+      }
+
+      /* 調整數量 */
+      function changeQty(id, delta) {
+        const item = ITEMS[id];
+        const newQty = item.qty + delta;
+        if (newQty < 1) return;          // 最少 1 件
+        item.qty = newQty;
+        recalculate();
+      }
+
+      /* 套用優惠碼 */
+      function applyPromo() {
+        const code = document.getElementById('promo-code').value.trim().toUpperCase();
+        const promoBtn = document.getElementById('promo-apply-btn');
+
+        if (PROMO_CODES[code] !== undefined) {
+          discount = PROMO_CODES[code];
+          recalculate();
+          promoBtn.textContent = '✓ 已套用';
+          promoBtn.style.background = '#eaf5f0';
+          promoBtn.style.color = '#2e7d61';
+          promoBtn.style.borderColor = '#2e7d61';
+        } else {
+          promoBtn.textContent = '無效';
+          promoBtn.style.background = '#fff1e7';
+          promoBtn.style.color = '#c87542';
+          promoBtn.style.borderColor = '#e07840';
+          setTimeout(() => {
+            promoBtn.textContent = '套用';
+            promoBtn.style.cssText = '';
+          }, 1800);
+        }
+      }
+
+      /* 確認下單 → 顯示 Modal */
+      function handleCheckout() {
+        document.getElementById('success-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      /* 關閉 Modal */
+      function closeModal() {
+        document.getElementById('success-modal').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      /* 點擊 overlay 背景關閉 */
+      document.getElementById('success-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+      });
+
+      /* ESC 關閉 Modal */
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      /* 初始化 */
+      recalculate();
+    </script>
+  </body>
+</html>
